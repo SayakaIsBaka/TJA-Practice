@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 
 import sys
+import os
+
 from pydub import AudioSegment
 from pydub.playback import play
 
@@ -83,11 +85,13 @@ def main(filename):
 
     (delimited_lines, start, end, start_bpm, start_measure) = get_delimited_lines(lines, pos, offset, bpm, float(sys.argv[2]), float(sys.argv[3]))
 
-    audio = AudioSegment.from_file(audio_name)
-    cut_audio_name = "practice_" + audio_name
-    export_audio(start, end, audio, cut_audio_name)
-
-    write_tja(header, start_bpm, cut_audio_name, "practice_" + file.name, delimited_lines, start_measure)
+    tja_dir = os.path.dirname(os.path.realpath(file.name))
+    
+    audio = AudioSegment.from_file(os.path.join(tja_dir, audio_name))
+    cut_audio_name = "practice_" + os.path.splitext(audio_name)[0] + ".ogg"
+    export_audio(start, end, audio, os.path.join(tja_dir, cut_audio_name))
+    
+    write_tja(header, start_bpm, cut_audio_name, os.path.join(tja_dir, "practice_" + os.path.basename(file.name)), delimited_lines, start_measure)
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:

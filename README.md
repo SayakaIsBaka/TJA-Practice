@@ -33,9 +33,9 @@ python tjapractice.py [tja file] [start time] [end time]
 ```
 
 Both start time and end time are in milliseconds (ms).
-After running the script, two new files should appear in the directory, both prefixed with `practice_`.
+After running the script, two new files should appear in the same directory as the original TJA file, both prefixed with `practice_`.
 
 ## Bugs / limitations
-- Both the TJA and audio files must be in the same directory as the script
+- Forked paths are not handled properly
 - Balloon counts are not handled properly
 - Code is a goddamn mess please save me
