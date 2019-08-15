@@ -56,8 +56,10 @@ def get_delimited_lines(lines, pos, offset, bpm, start, end):
         pos += 1
     return (delimited_lines, start_audio, cur_time, start_bpm, start_measure)
 
-def export_audio(start, end, audio, filename):
-    cut_audio = audio[start:][:(end - start + 3000)].fade_out(3000)
+def export_audio(start, end, audio, filename, fadeout = 0):
+    cut_audio = audio[start:][:(end - start + fadeout)]
+    if fadeout > 0:
+        cut_audio = cut_audio.fade_out(fadeout)
     cut_audio.export(filename, format="ogg")
 
 def write_tja(header, bpm, audio_name, filename, lines, measure):
@@ -89,12 +91,15 @@ def main(filename):
     
     audio = AudioSegment.from_file(os.path.join(tja_dir, audio_name))
     cut_audio_name = "practice_" + os.path.splitext(audio_name)[0] + ".ogg"
-    export_audio(start, end, audio, os.path.join(tja_dir, cut_audio_name))
+    if len(sys.argv) > 4:
+        export_audio(start, end, audio, os.path.join(tja_dir, cut_audio_name), int(sys.argv[4]))
+    else:
+        export_audio(start, end, audio, os.path.join(tja_dir, cut_audio_name))
     
     write_tja(header, start_bpm, cut_audio_name, os.path.join(tja_dir, "practice_" + os.path.basename(file.name)), delimited_lines, start_measure)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: tjapractice.py [tja file] [start time] [end time] (in ms)", file=sys.stderr)
+    if len(sys.argv) < 4:
+        print("Usage: tjapractice.py [tja file] [start time] [end time] [fade-out (optional)] (in ms)", file=sys.stderr)
     else:
         main(sys.argv[1])
